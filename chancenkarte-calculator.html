@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Free Chancenkarte eligibility calculator. Check if you qualify for Germany's Opportunity Card in 2 minutes. Built by BrijBest." />
+  <title>Chancenkarte Calculator — Do You Qualify? | BrijBest Germany</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    :root{
+      --black:#0C0C0C;--gold:#E8B84B;--gold-lt:#F5D78E;
+      --cream:#F2EFE8;--white:#FAFAF8;--muted:#7A7468;
+      --border:#D9D4C8;--red:#EF4444;--amber:#F59E0B;--green:#22C55E;
+      --ff-head:'Syne',sans-serif;--ff-body:'Instrument Sans',sans-serif
+    }
+    body{font-family:var(--ff-body);background:var(--cream);color:var(--black);line-height:1.6;overflow-x:hidden}
+    nav{background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:58px;position:sticky;top:0;z-index:100}
+    .nav-logo{font-family:var(--ff-head);font-weight:800;font-size:1rem;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:9px}
+    .logo-b{background:var(--gold);color:var(--black);width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:800}
+    .nav-right{display:flex;align-items:center;gap:16px}
+    .nav-right a{color:#888;text-decoration:none;font-size:.82rem;font-weight:500;transition:color .2s}
+    .nav-right a:hover{color:var(--gold)}
+    .nav-cta-sm{background:var(--gold)!important;color:var(--black)!important;padding:6px 14px!important;border-radius:5px!important;font-weight:600!important}
+    .hero{background:var(--black);color:var(--white);padding:60px 40px 50px;text-align:center;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(232,184,75,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(232,184,75,.05) 1px,transparent 1px);background-size:48px 48px}
+    .hero::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,var(--black) 33%,#C0392B 33% 66%,var(--gold) 66%)}
+    .hero-inner{position:relative;max-width:680px;margin:0 auto}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.2);color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 13px;border-radius:20px;margin-bottom:22px}
+    .hero h1{font-family:var(--ff-head);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.02em;margin-bottom:18px}
+    .hero h1 em{font-style:normal;color:var(--gold)}
+    .hero-sub{color:#999;font-size:1rem;max-width:520px;margin:0 auto 30px;line-height:1.7}
+    .hero-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+    .hbadge{background:#161616;border:1px solid #2A2A2A;color:#BBB;font-size:.78rem;padding:6px 12px;border-radius:4px}
+    .main-wrap{max-width:1100px;margin:0 auto;padding:40px 24px 80px;display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+    .score-panel{position:sticky;top:78px;background:var(--black);border-radius:12px;padding:28px 24px;color:var(--white);text-align:center;overflow:hidden}
+    .score-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(232,184,75,.06),transparent 70%);pointer-events:none}
+    .score-label{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#555;margin-bottom:16px}
+    .ring-wrap{position:relative;width:160px;height:160px;margin:0 auto 16px}
+    .ring-wrap svg{transform:rotate(-90deg)}
+    .ring-bg{fill:none;stroke:#1E1E1E;stroke-width:12}
+    .ring-fill{fill:none;stroke:var(--gold);stroke-width:12;stroke-linecap:round;stroke-dasharray:408;stroke-dashoffset:408;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1),stroke .4s ease}
+    .ring-score{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .ring-num{font-family:var(--ff-head);font-size:2.8rem;font-weight:800;line-height:1;color:var(--white);transition:color .4s}
+    .ring-denom{font-size:.8rem;color:#555;margin-top:2px}
+    .verdict-badge{display:inline-block;padding:7px 16px;border-radius:20px;font-family:var(--ff-head);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:all .4s;margin-bottom:14px}
+    .verdict-neutral{background:#1A1A1A;color:#555;border:1px solid #2A2A2A}
+    .verdict-eligible{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+    .verdict-border{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+    .verdict-no{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+    .verdict-blocked{background:rgba(139,92,246,.15);color:#c084fc;border:1px solid rgba(139,92,246,.3)}
+    .verdict-text{font-size:.82rem;color:#777;line-height:1.6;min-height:60px;transition:color .4s}
+    .panel-divider{border:none;border-top:1px solid #1E1E1E;margin:18px 0}
+    .score-breakdown{text-align:left}
+    .score-breakdown-title{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#444;margin-bottom:10px}
+    .breakdown-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1A1A1A;font-size:.78rem;color:#555;transition:color .3s}
+    .breakdown-item:last-child{border-bottom:none}
+    .breakdown-item.earned{color:#CCC}
+    .breakdown-item.earned .breakdown-pts{color:var(--gold);font-weight:700}
+    .breakdown-pts{font-weight:600;min-width:28px;text-align:right}
+    .panel-cta{display:block;margin-top:20px;background:var(--gold);color:var(--black);text-decoration:none;font-family:var(--ff-head);font-size:.82rem;font-weight:700;padding:11px 16px;border-radius:6px;text-align:center;transition:background .2s,transform .15s}
+    .panel-cta:hover{background:var(--gold-lt);transform:translateY(-1px)}
+    .section-tag{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:32px 0 10px;padding-left:2px;display:flex;align-items:center;gap:8px}
+    .section-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+    .q-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:22px 24px;margin-bottom:12px;transition:border-color .3s,box-shadow .3s;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
+    .q-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border);transition:background .3s}
+    .q-card.answered{border-color:rgba(232,184,75,.4);box-shadow:0 2px 16px rgba(232,184,75,.08)}
+    .q-card.answered::before{background:var(--gold)}
+    .q-card.blocking{border-color:rgba(239,68,68,.4);box-shadow:0 2px 16px rgba(239,68,68,.08)}
+    .q-card.blocking::before{background:var(--red)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .q-card:nth-child(2){animation-delay:.05s}.q-card:nth-child(3){animation-delay:.1s}.q-card:nth-child(4){animation-delay:.15s}.q-card:nth-child(5){animation-delay:.2s}.q-card:nth-child(6){animation-delay:.25s}.q-card:nth-child(7){animation-delay:.3s}.q-card:nth-child(8){animation-delay:.35s}
+    .q-num{font-family:var(--ff-head);font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .q-text{font-family:var(--ff-head);font-size:1.05rem;font-weight:700;margin-bottom:6px;line-height:1.3;color:var(--black)}
+    .q-hint{font-size:.78rem;color:var(--muted);margin-bottom:16px;line-height:1.5}
+    .options{display:flex;flex-direction:column;gap:8px}
+    .option{display:none}
+    .option+label{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border:1.5px solid var(--border);border-radius:7px;cursor:pointer;transition:all .18s;font-size:.875rem;color:#555;background:var(--white);line-height:1.4;user-select:none}
+    .option+label:hover{border-color:var(--gold);color:var(--black)}
+    .option:checked+label{border-color:var(--gold);background:rgba(232,184,75,.08);color:var(--black);font-weight:600}
+    .opt-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;transition:all .18s;background:var(--white);display:flex;align-items:center;justify-content:center}
+    .option:checked+label .opt-radio{border-color:var(--gold);background:var(--gold)}
+    .option:checked+label .opt-radio::after{content:'';width:6px;height:6px;background:var(--black);border-radius:50%}
+    .opt-pts{margin-left:auto;padding-left:8px;flex-shrink:0;font-size:.75rem;font-weight:700;color:var(--muted);transition:color .2s}
+    .option:checked+label .opt-pts{color:var(--gold)}
+    .block-msg{display:none;margin-top:14px;padding:12px 14px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:6px;font-size:.82rem;color:#888;line-height:1.6}
+    .block-msg.show{display:block}
+    .block-msg a{color:#f87171}
+    .shortage-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+    .shortage-tag{background:#F5F2EC;border:1px solid var(--border);color:var(--muted);font-size:.72rem;font-weight:500;padding:3px 9px;border-radius:3px}
+    .results-section{margin-top:40px;border-radius:12px;overflow:hidden;display:none}
+    .results-section.show{display:block}
+    .result-header{padding:32px 32px 24px;color:var(--white);position:relative;overflow:hidden}
+    .result-header.green-bg{background:linear-gradient(135deg,#0f2e1a,#1a4a28)}
+    .result-header.amber-bg{background:linear-gradient(135deg,#2a1e06,#3d2c0a)}
+    .result-header.red-bg{background:linear-gradient(135deg,#2a0a0a,#3d1212)}
+    .result-header.purple-bg{background:linear-gradient(135deg,#1a0a2a,#2a1240)}
+    .result-verdict-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;opacity:.6}
+    .result-verdict-title{font-family:var(--ff-head);font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;line-height:1.2;margin-bottom:14px}
+    .result-verdict-title em{font-style:normal;color:var(--gold)}
+    .result-verdict-body{font-size:.9rem;opacity:.8;line-height:1.7;max-width:560px}
+    .result-steps{background:var(--white);padding:28px 32px}
+    .steps-title{font-family:var(--ff-head);font-size:1rem;font-weight:700;margin-bottom:18px;color:var(--black)}
+    .step-list{list-style:none}
+    .step-item{display:flex;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .step-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+    .step-icon{width:32px;height:32px;border-radius:50%;background:var(--black);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;flex-shrink:0;font-family:var(--ff-head)}
+    .step-content h4{font-size:.9rem;font-weight:700;margin-bottom:3px}
+    .step-content p{font-size:.82rem;color:var(--muted);line-height:1.6}
+    .step-content a{color:var(--black);font-weight:600}
+    .result-ctas{background:var(--cream);border-top:1px solid var(--border);padding:24px 32px;display:flex;gap:12px;flex-wrap:wrap}
+    .rcta-primary{flex:1;min-width:180px;background:var(--black);color:var(--white);text-decoration:none;font-family:var(--ff-head);font-size:.88rem;font-weight:700;padding:12px 20px;border-radius:6px;text-align:center;transition:background .2s}
+    .rcta-primary:hover{background:#222}
+    .rcta-secondary{flex:1;min-width:160px;background:transparent;color:var(--black);text-decoration:none;font-family:var(--ff-head);font-size:.88rem;font-weight:700;border:2px solid var(--black);padding:12px 20px;border-radius:6px;text-align:center;transition:all .2s}
+    .rcta-secondary:hover{background:var(--black);color:var(--white)}
+    .disclaimer{margin-top:32px;padding:16px 20px;background:var(--white);border:1px solid var(--border);border-radius:8px;font-size:.77rem;color:var(--muted);line-height:1.6}
+    .disclaimer a{color:var(--black);font-weight:600}
+    .reset-btn{display:none;margin-top:24px;background:transparent;border:1.5px solid var(--border);color:var(--muted);font-family:var(--ff-body);font-size:.82rem;font-weight:600;padding:9px 20px;border-radius:6px;cursor:pointer;transition:all .2s;width:100%}
+    .reset-btn:hover{border-color:var(--black);color:var(--black)}
+    .reset-btn.show{display:block}
+    .confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;display:none}
+    .confetti-container.show{display:block}
+    .confetto{position:absolute;top:-10px;border-radius:2px;animation:fall 3s linear forwards}
+    @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+    @media(max-width:820px){
+      .main-wrap{grid-template-columns:1fr;padding:24px 16px 60px;gap:0}
+      .score-panel{position:static;border-radius:0;margin:0 -16px 24px;display:grid;grid-template-columns:auto 1fr;gap:20px;text-align:left;align-items:center;padding:20px}
+      .ring-wrap{width:110px;height:110px;margin:0}
+      .ring-num{font-size:2rem}
+      .score-breakdown,.panel-divider{display:none}
+      nav{padding:0 16px}
+      .hero{padding:40px 20px 36px}
+      .result-header,.result-steps,.result-ctas{padding-left:20px;padding-right:20px}
+      .result-ctas{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+<div class="confetti-container" id="confettiContainer"></div>
+<nav>
+  <a href="index.html" class="nav-logo"><div class="logo-b">B</div>BrijBest</a>
+  <div class="nav-right">
+    <a href="index.html">← Job Alerts</a>
+    <a href="https://www.brijbest.com" class="nav-cta-sm">Coaching →</a>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">🇩🇪 Free Official Points Calculator</div>
+    <h1>Do you qualify for the<br><em>Chancenkarte?</em></h1>
+    <p class="hero-sub">Germany's Opportunity Card lets you live in Germany up to 12 months while job hunting — no job offer needed. Answer 8 questions and get your eligibility score right now.</p>
+    <div class="hero-badges">
+      <span class="hbadge">⏱️ Takes 2 minutes</span>
+      <span class="hbadge">📋 Based on § 20a AufenthG</span>
+      <span class="hbadge">🔒 No data collected</span>
+      <span class="hbadge">✅ Free forever</span>
+    </div>
+  </div>
+</section>
+<div class="main-wrap">
+  <div class="questions-col">
+    <div class="section-tag">Step 1 — Prerequisite (Required)</div>
+    <div class="q-card" id="qcard-0">
+      <div class="q-num">Question 1 of 8 · Mandatory Prerequisite</div>
+      <div class="q-text">What is your highest completed qualification?</div>
+      <div class="q-hint">The Chancenkarte requires either a university degree or a vocational qualification of at least 2 years. This is non-negotiable — points only count if you clear this baseline first.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q0" id="q0a" value="uni" onchange="answer(0,'uni')"/>
+        <label for="q0a"><span class="opt-radio"></span><span>🎓 University degree (Bachelor's, Master's, or PhD)</span><span class="opt-pts">✓ Eligible</span></label>
+        <input class="option" type="radio" name="q0" id="q0b" value="voc" onchange="answer(0,'voc')"/>
+        <label for="q0b"><span class="opt-radio"></span><span>🛠️ Vocational / trade qualification (minimum 2 years training)</span><span class="opt-pts">✓ Eligible</span></label>
+        <input class="option" type="radio" name="q0" id="q0c" value="none" onchange="answer(0,'none')"/>
+        <label for="q0c"><span class="opt-radio"></span><span>❌ No completed degree or vocational qualification yet</span><span class="opt-pts">✗ Blocked</span></label>
+      </div>
+      <div class="block-msg" id="block0"><strong style="color:#f87171;">Prerequisite not met.</strong> The Chancenkarte requires at least a recognised vocational qualification or university degree. Without one you cannot apply. Consider a <a href="https://www.make-it-in-germany.com/en/visa-residence/types/jobseeker-visa" target="_blank">Job Seeker Visa</a> or <a href="https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card" target="_blank">EU Blue Card</a> as alternatives.</div>
+    </div>
+    <div class="section-tag">Step 2 — Points (You Need 6 or More)</div>
+    <div class="q-card" id="qcard-1">
+      <div class="q-num">Question 2 of 8 · Language Skills · Up to 2 pts</div>
+      <div class="q-text">What is your German language level?</div>
+      <div class="q-hint">German proficiency is the highest-weighted single criterion. Even A1 earns a point — and B2+ can be decisive for reaching 6.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q1" id="q1a" value="0" onchange="answer(1,0)"/>
+        <label for="q1a"><span class="opt-radio"></span><span>None / Below A1</span><span class="opt-pts">+0</span></label>
+        <input class="option" type="radio" name="q1" id="q1b" value="1" onchange="answer(1,1)"/>
+        <label for="q1b"><span class="opt-radio"></span><span>A1 to B1</span><span class="opt-pts">+1</span></label>
+        <input class="option" type="radio" name="q1" id="q1c" value="2" onchange="answer(1,2)"/>
+        <label for="q1c"><span class="opt-radio"></span><span>B2 or higher (C1 / C2)</span><span class="opt-pts">+2</span></label>
+      </div>
+    </div>
+    <div class="q-card" id="qcard-2">
+      <div class="q-num">Question 3 of 8 · Language Skills · Up to 1 pt</div>
+      <div class="q-text">What is your English language level?</div>
+      <div class="q-hint">English points stack on top of German points — not instead of. Strong English and any German = up to 3 language points combined.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q2" id="q2a" value="0" onchange="answer(2,0)"/>
+        <label for="q2a"><span class="opt-radio"></span><span>Below B2</span><span class="opt-pts">+0</span></label>
+        <input class="option" type="radio" name="q2" id="q2b" value="1" onchange="answer(2,1)"/>
+        <label for="q2b"><span class="opt-radio"></span><span>B2 or higher</span><span class="opt-pts">+1</span></label>
+      </div>
+    </div>
+    <div class="q-card" id="qcard-3">
+      <div class="q-num">Question 4 of 8 · Experience · Up to 2 pts</div>
+      <div class="q-text">How many years of professional experience do you have in your field?</div>
+      <div class="q-hint">Experience in your field of qualification counts — not general work history. Country of experience does not matter.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q3" id="q3a" value="0" onchange="answer(3,0)"/>
+        <label for="q3a"><span class="opt-radio"></span><span>Less than 2 years</span><span class="opt-pts">+0</span></label>
+        <input class="option" type="radio" name="q3" id="q3b" value="1" onchange="answer(3,1)"/>
+        <label for="q3b"><span class="opt-radio"></span><span>2 to 4 years</span><span class="opt-pts">+1</span></label>
+        <input class="option" type="radio" name="q3" id="q3c" value="2" onchange="answer(3,2)"/>
+        <label for="q3c"><span class="opt-radio"></span><span>5 or more years</span><span class="opt-pts">+2</span></label>
+      </div>
+    </div>
+    <div class="q-card" id="qcard-4">
+      <div class="q-num">Question 5 of 8 · Shortage Occupation · Up to 1 pt</div>
+      <div class="q-text">Is your profession on Germany's shortage occupation list (Engpassberufe)?</div>
+      <div class="shortage-tags">
+        <span class="shortage-tag">🏥 Nurses / Pfleger</span><span class="shortage-tag">💊 Doctors (specialist)</span>
+        <span class="shortage-tag">💻 Software Engineers</span><span class="shortage-tag">📊 Data Scientists</span>
+        <span class="shortage-tag">⚙️ Mechanical Engineers</span><span class="shortage-tag">⚡ Electricians</span>
+        <span class="shortage-tag">🔧 Skilled Tradespeople</span><span class="shortage-tag">🏗️ Civil Engineers</span>
+        <span class="shortage-tag">👶 Childcare Workers</span><span class="shortage-tag">🚛 HGV Drivers</span>
+        <span class="shortage-tag">🔐 Cybersecurity</span><span class="shortage-tag">🤖 Automation Engineers</span>
+      </div>
+      <div class="q-hint">If unsure, check the BA's Engpassanalyse. Many professions qualify that people don't realise.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q4" id="q4a" value="0" onchange="answer(4,0)"/>
+        <label for="q4a"><span class="opt-radio"></span><span>No / Not sure</span><span class="opt-pts">+0</span></label>
+        <input class="option" type="radio" name="q4" id="q4b" value="1" onchange="answer(4,1)"/>
+        <label for="q4b"><span class="opt-radio"></span><span>Yes — my field is on the shortage occupation list</span><span class="opt-pts">+1</span></label>
+      </div>
+    </div>
+    <div class="q-card" id="qcard-5">
+      <div class="q-num">Question 6 of 8 · Age · Up to 2 pts</div>
+      <div class="q-text">What is your current age?</div>
+      <div class="q-hint">Age is one of the two highest-weighted criteria alongside German language. Germany prioritises long-term labour market integration.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q5" id="q5a" value="0" onchange="answer(5,0)"/>
+        <label for="q5a"><span class="opt-radio"></span><span>41 or older</span><span class="opt-pts">+0</span></label>
+        <input class="option" type="radio" name="q5" id="q5b" value="1" onchange="answer(5,1)"/>
+        <label for="q5b"><span class="opt-radio"></span><span>35 to 40</span><span class="opt-pts">+1</span></label>
+        <input class="option" type="radio" name="q5" id="q5c" value="2" onchange="answer(5,2)"/>
+        <label for="q5c"><span class="opt-radio"></span><span>Under 35</span><span class="opt-pts">+2</span></label>
+      </div>
+    </div>
+    <div class="q-card" id="qcard-6">
+      <div class="q-num">Question 7 of 8 · Germany Connection · Up to 1 pt</div>
+      <div class="q-text">Have you legally lived in Germany for at least 6 months in the last 5 years?</div>
+      <div class="q-hint">Includes time on student visa, previous work visa, language course, or any other legal residence — shows prior integration.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q6" id="q6a" value="0" onchange="answer(6,0)"/>
+        <label for="q6a"><span class="opt-radio"></span><span>No</span><span class="opt-pts">+0</span></label>
+        <input class="option" type="radio" name="q6" id="q6b" value="1" onchange="answer(6,1)"/>
+        <label for="q6b"><span class="opt-radio"></span><span>Yes — legally in Germany for 6+ months in the last 5 years</span><span class="opt-pts">+1</span></label>
+      </div>
+    </div>
+    <div class="q-card" id="qcard-7">
+      <div class="q-num">Question 8 of 8 · Family Ties · Up to 1 pt</div>
+      <div class="q-text">Do you have a spouse, parent, or child who is a German citizen or has permanent residence in Germany?</div>
+      <div class="q-hint">Close family means spouse/registered partner, parent, or child. This demonstrates a personal tie to Germany beyond professional motivation.</div>
+      <div class="options">
+        <input class="option" type="radio" name="q7" id="q7a" value="0" onchange="answer(7,0)"/>
+        <label for="q7a"><span class="opt-radio"></span><span>No</span><span class="opt-pts">+0</span></label>
+        <input class="option" type="radio" name="q7" id="q7b" value="1" onchange="answer(7,1)"/>
+        <label for="q7b"><span class="opt-radio"></span><span>Yes — spouse, parent, or child is German citizen or permanent resident</span><span class="opt-pts">+1</span></label>
+      </div>
+    </div>
+    <div class="results-section" id="resultsSection">
+      <div class="result-header" id="resultHeader">
+        <div class="result-verdict-label" id="resultLabel">Your Verdict</div>
+        <div class="result-verdict-title" id="resultTitle">Calculating...</div>
+        <div class="result-verdict-body" id="resultBody"></div>
+      </div>
+      <div class="result-steps"><div class="steps-title" id="stepsTitle">Next Steps</div><ul class="step-list" id="stepsList"></ul></div>
+      <div class="result-ctas">
+        <a href="index.html" class="rcta-primary">🔔 Get Free Germany Job Alerts →</a>
+        <a href="https://www.brijbest.com" class="rcta-secondary">📋 Book Coaching with Brij</a>
+      </div>
+    </div>
+    <div class="disclaimer"><strong>⚠️ Disclaimer:</strong> This calculator is a simplified guide based on publicly available information about § 20a AufenthG (Chancenkarte). It is not legal advice and does not guarantee visa approval. Always verify on the <a href="https://www.make-it-in-germany.com" target="_blank">Make it in Germany portal</a> or consult a qualified German immigration lawyer before applying.</div>
+    <button class="reset-btn" id="resetBtn" onclick="resetCalc()">↺ Start Over — Recalculate</button>
+  </div>
+  <div class="score-panel">
+    <div class="score-label">Your Chancenkarte Score</div>
+    <div class="ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="ring-bg" cx="80" cy="80" r="65"/>
+        <circle class="ring-fill" cx="80" cy="80" r="65" id="ringFill"/>
+      </svg>
+      <div class="ring-score"><div class="ring-num" id="scoreNum">0</div><div class="ring-denom">of 10 pts</div></div>
+    </div>
+    <div class="verdict-badge verdict-neutral" id="verdictBadge">Answer questions →</div>
+    <p class="verdict-text" id="verdictText">Complete all 8 questions to see your eligibility verdict.</p>
+    <hr class="panel-divider"/>
+    <div class="score-breakdown">
+      <div class="score-breakdown-title">Score Breakdown</div>
+      <div class="breakdown-item" id="bd-prereq"><span>🎓 Prerequisite</span><span class="breakdown-pts" id="bd-prereq-pts">—</span></div>
+      <div class="breakdown-item" id="bd-german"><span>🗣️ German Language</span><span class="breakdown-pts" id="bd-german-pts">—</span></div>
+      <div class="breakdown-item" id="bd-english"><span>🇬🇧 English Language</span><span class="breakdown-pts" id="bd-english-pts">—</span></div>
+      <div class="breakdown-item" id="bd-exp"><span>💼 Experience</span><span class="breakdown-pts" id="bd-exp-pts">—</span></div>
+      <div class="breakdown-item" id="bd-shortage"><span>📋 Shortage Field</span><span class="breakdown-pts" id="bd-shortage-pts">—</span></div>
+      <div class="breakdown-item" id="bd-age"><span>🎂 Age</span><span class="breakdown-pts" id="bd-age-pts">—</span></div>
+      <div class="breakdown-item" id="bd-germany"><span>🗺️ Germany Tie</span><span class="breakdown-pts" id="bd-germany-pts">—</span></div>
+      <div class="breakdown-item" id="bd-family"><span>👨‍👩‍👧 Family Tie</span><span class="breakdown-pts" id="bd-family-pts">—</span></div>
+    </div>
+    <a href="index.html" class="panel-cta">🔔 Get Daily Germany Job Alerts</a>
+  </div>
+</div>
+<script>
+const answers=[...Array(8)].fill(null);
+const CIRC=408;
+let score=0,displayed=0,blocked=false;
+const bdPts=['bd-prereq-pts','bd-german-pts','bd-english-pts','bd-exp-pts','bd-shortage-pts','bd-age-pts','bd-germany-pts','bd-family-pts'];
+const bdRows=['bd-prereq','bd-german','bd-english','bd-exp','bd-shortage','bd-age','bd-germany','bd-family'];
+
+function answer(qi,val){
+  answers[qi]=typeof val==='string'?val:parseInt(val);
+  const card=document.getElementById('qcard-'+qi);
+  card.classList.add('answered');
+  if(qi===0){
+    const bm=document.getElementById('block0');
+    if(val==='none'){bm.classList.add('show');card.classList.remove('answered');card.classList.add('blocking');}
+    else{bm.classList.remove('show');card.classList.remove('blocking');card.classList.add('answered');}
+  }
+  recalc();updateBreakdown();checkComplete();
+}
+
+function recalc(){
+  blocked=answers[0]==='none';
+  let p=0;
+  if(!blocked&&answers[0]!==null){
+    for(let i=1;i<8;i++){if(answers[i]!==null)p+=answers[i];}
+  }
+  score=blocked?0:p;updatePanel();
+}
+
+function updatePanel(){
+  const badge=document.getElementById('verdictBadge');
+  const text=document.getElementById('verdictText');
+  const ring=document.getElementById('ringFill');
+  const numEl=document.getElementById('scoreNum');
+  animCount(numEl,displayed,score,500);displayed=score;
+  const offset=CIRC-Math.min(score/10,1)*CIRC;
+  ring.style.strokeDashoffset=offset;
+  if(blocked){ring.style.stroke='#8b5cf6';badge.className='verdict-badge verdict-blocked';badge.textContent='Not Eligible';text.textContent='Prerequisite qualification required. See alternatives in Question 1.';return;}
+  if(answers[0]===null){ring.style.stroke='#333';badge.className='verdict-badge verdict-neutral';badge.textContent='Answer Q1 first';text.textContent='Start with Question 1 to check the mandatory prerequisite.';return;}
+  const done=answers.filter((a,i)=>i>0&&a!==null).length;
+  if(done<7){
+    ring.style.stroke=score>=6?'#22C55E':score>=4?'#F59E0B':'#555';
+    badge.className='verdict-badge verdict-neutral';badge.textContent=score+' / 10 so far';
+    const need=Math.max(0,6-score);
+    text.textContent=need>0?'Need '+need+' more point'+(need>1?'s':'')+' to qualify. Keep answering.':'On track to qualify! Complete all questions to confirm.';
+    return;
+  }
+  if(score>=6){ring.style.stroke='#22C55E';badge.className='verdict-badge verdict-eligible';badge.textContent='✓ ELIGIBLE';text.textContent='You qualify with '+score+' points. Scroll down for your next steps.';}
+  else if(score>=4){ring.style.stroke='#F59E0B';badge.className='verdict-badge verdict-border';badge.textContent='⚠ BORDERLINE';text.textContent=score+' points — '+(6-score)+' short of threshold. See tips below.';}
+  else{ring.style.stroke='#EF4444';badge.className='verdict-badge verdict-no';badge.textContent='✗ NOT YET';text.textContent=score+' points — below the 6-point minimum. See alternatives below.';}
+}
+
+function updateBreakdown(){
+  const vals=[
+    answers[0]!==null?(answers[0]==='none'?'✗':'✓'):'—',
+    answers[1]!==null?(answers[1]>0?'+'+answers[1]:'0'):'—',
+    answers[2]!==null?(answers[2]>0?'+'+answers[2]:'0'):'—',
+    answers[3]!==null?(answers[3]>0?'+'+answers[3]:'0'):'—',
+    answers[4]!==null?(answers[4]>0?'+'+answers[4]:'0'):'—',
+    answers[5]!==null?(answers[5]>0?'+'+answers[5]:'0'):'—',
+    answers[6]!==null?(answers[6]>0?'+'+answers[6]:'0'):'—',
+    answers[7]!==null?(answers[7]>0?'+'+answers[7]:'0'):'—'
+  ];
+  vals.forEach((v,i)=>{
+    document.getElementById(bdPts[i]).textContent=v;
+    const earned=v!=='—'&&v!=='0'&&v!=='✗';
+    document.getElementById(bdRows[i]).classList.toggle('earned',earned||v==='✓');
+  });
+}
+
+function checkComplete(){
+  if(!answers.every(a=>a!==null))return;
+  showResults();
+  document.getElementById('resetBtn').classList.add('show');
+  if(!blocked&&score>=6)setTimeout(fireConfetti,400);
+}
+
+function step(icon,title,desc,url){
+  return '<li class="step-item"><div class="step-icon">'+icon+'</div><div class="step-content"><h4>'+title+'</h4><p>'+desc+(url?' <a href="'+url+'" target="_blank">Learn more →</a>':'')+'</p></div></li>';
+}
+
+function showResults(){
+  const sec=document.getElementById('resultsSection');sec.classList.add('show');
+  const hdr=document.getElementById('resultHeader');
+  const lbl=document.getElementById('resultLabel');
+  const ttl=document.getElementById('resultTitle');
+  const bdy=document.getElementById('resultBody');
+  const stl=document.getElementById('stepsTitle');
+  const stp=document.getElementById('stepsList');
+  if(blocked){
+    hdr.className='result-header purple-bg';lbl.textContent='Prerequisite Not Met';
+    ttl.innerHTML='You cannot apply for the <em>Chancenkarte</em> yet.';
+    bdy.textContent='The Chancenkarte requires a completed vocational qualification (min. 2 years) or university degree. Without one, neither route is available.';
+    stl.textContent='Alternative Routes to Germany';
+    stp.innerHTML=step('1','EU Blue Card','For university graduates with a job offer in Germany paying €45,300+/yr. No German required.','https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card')+step('2','Job Seeker Visa','For graduates with 5 years experience. 6 months in Germany to search — similar to Chancenkarte but requires more credentials.','https://www.make-it-in-germany.com/en/visa-residence/types/jobseeker-visa')+step('3','Complete a Qualification First','Completing a recognised vocational training or degree opens both the Chancenkarte and Blue Card routes.','https://www.make-it-in-germany.com');
+  } else if(score>=6){
+    hdr.className='result-header green-bg';lbl.textContent='✅ ELIGIBLE — '+score+' / 10 Points';
+    ttl.innerHTML='You <em>qualify</em> for the Chancenkarte.';
+    bdy.textContent='With '+score+' points (threshold: 6), you meet Germany\'s Opportunity Card requirements. You can apply, move to Germany for up to 12 months, and job search legally — including part-time work up to 20 hours/week.';
+    stl.textContent='Your Next Steps';
+    stp.innerHTML=step('1','Check Qualification Recognition','Use the ANABIN database or apply for a Statement of Comparability to confirm your degree/cert is recognised in Germany.','https://anabin.kmk.org')+step('2','Open a Blocked Account (Sperrkonto)','Prove sufficient funds: €13,092 (€1,091/month) via Fintiba, Deutsche Bank, or similar. Required for your visa application.','https://www.fintiba.com')+step('3','Apply at Your German Embassy','Submit at the German embassy in your country. Book early — appointments can take 4–12 weeks.','https://www.auswaertiges-amt.de/en/visa-service')+step('4','Register for Germany Job Alerts — Now','Start searching before you arrive. Our free daily digest matches German jobs to your visa status and language level every morning.','index.html');
+  } else if(score>=4){
+    hdr.className='result-header amber-bg';lbl.textContent='⚠️ BORDERLINE — '+score+' / 10 Points';
+    ttl.innerHTML='You need <em>'+(6-score)+' more point'+(6-score>1?'s':'')+' </em>to qualify.';
+    bdy.textContent=score+' points puts you just below the 6-point threshold. Several criteria can be improved with deliberate effort over the next few months.';
+    stl.textContent='How to Close the Gap';
+    stp.innerHTML=step('📚','Learn German to A1','Even A1 earns +1 point. 60–80 hours of study via Duolingo or a Goethe-Institut course can get you there in 2–3 months.','https://www.goethe.de')+step('🏅','Get an English B2 Certificate','IELTS 5.5+ or Cambridge B2 First earns +1 point. If you already speak English, sitting the exam may be all you need.','https://www.britishcouncil.org/exam/ielts')+step('📋','Verify Shortage Occupation Status','Use the BA\'s Engpassanalyse — many professions qualify that people don\'t realise. One extra point here could tip you over.','https://statistik.arbeitsagentur.de')+step('💙','Consider the EU Blue Card Instead','If you have a university degree, a job offer in Germany bypasses the points system entirely. Our job alerts help you find qualifying roles.','index.html');
+  } else {
+    hdr.className='result-header red-bg';lbl.textContent='✗ NOT ELIGIBLE YET — '+score+' / 10 Points';
+    ttl.innerHTML='The Chancenkarte is out of reach <em>right now.</em>';
+    bdy.textContent=score+' points is significantly below the minimum of 6. However, criteria can be improved with planning, and alternative routes may still apply.';
+    stl.textContent='Realistic Alternative Paths';
+    stp.innerHTML=step('💙','EU Blue Card','Holds a university degree + job offer paying €45,300+/yr? The Blue Card bypasses the points system entirely.','https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card')+step('📚','Build Points Over 12–18 Months','German A1 (+1) or B2 (+2) and English B2 (+1) are the fastest gains. Age is fixed, but language is entirely in your control.','https://www.goethe.de')+step('🔗','Create a Germany Tie','A language course or internship in Germany (6+ months) earns +1 point and gives you invaluable German contacts.','https://www.make-it-in-germany.com')+step('🤝','Get Expert Immigration Advice','A German immigration lawyer can identify routes specific to your situation. Brij can refer you to trusted advisors.','https://www.brijbest.com');
+  }
+  setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'start'}),300);
+}
+
+function fireConfetti(){
+  const c=document.getElementById('confettiContainer');
+  c.classList.add('show');c.innerHTML='';
+  const cols=['#E8B84B','#22C55E','#60A5FA','#F472B6','#A78BFA','#FB923C'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');el.className='confetto';
+    el.style.cssText='left:'+Math.random()*100+'vw;width:'+(Math.random()*8+4)+'px;height:'+(Math.random()*8+4)+'px;background:'+cols[Math.floor(Math.random()*cols.length)]+';animation-delay:'+Math.random()*1.5+'s;animation-duration:'+(Math.random()*2+2)+'s;transform:rotate('+Math.random()*360+'deg)';
+    c.appendChild(el);
+  }
+  setTimeout(()=>{c.classList.remove('show');c.innerHTML='';},5000);
+}
+
+function animCount(el,from,to,dur){
+  const s=performance.now();
+  (function f(now){const p=Math.min((now-s)/dur,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(f);})(performance.now());
+}
+
+function resetCalc(){
+  answers.fill(null);score=0;displayed=0;blocked=false;
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  document.querySelectorAll('.q-card').forEach(c=>{c.classList.remove('answered','blocking');});
+  document.getElementById('block0').classList.remove('show');
+  document.getElementById('resultsSection').classList.remove('show');
+  document.getElementById('resetBtn').classList.remove('show');
+  document.getElementById('scoreNum').textContent='0';
+  document.getElementById('ringFill').style.strokeDashoffset=CIRC;
+  document.getElementById('ringFill').style.stroke='';
+  document.getElementById('verdictBadge').className='verdict-badge verdict-neutral';
+  document.getElementById('verdictBadge').textContent='Answer questions →';
+  document.getElementById('verdictText').textContent='Complete all 8 questions to see your eligibility verdict.';
+  bdPts.forEach(id=>document.getElementById(id).textContent='—');
+  bdRows.forEach(id=>document.getElementById(id).classList.remove('earned'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.getElementById('ringFill').style.strokeDasharray=CIRC;
+document.getElementById('ringFill').style.strokeDashoffset=CIRC;
+</script>
+</body>
+</html>
